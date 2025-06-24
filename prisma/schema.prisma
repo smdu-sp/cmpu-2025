@@ -1,0 +1,106 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Permissao {
+  DEV
+  TOTAL
+  LICITACAO
+  JULGADORA
+}
+
+enum Tipo_Usuario {
+  INTERNO
+  EXTERNO
+}
+
+model Usuario {
+  id            String        @id @default(uuid())
+  nome          String
+  email         String        @unique
+  login         String?       @unique
+  permissao     Permissao
+  senha         String?
+  tipo          Tipo_Usuario  @default(INTERNO)
+
+  criadoEm      DateTime      @default(now())
+  atualizadoEm  DateTime      @default(now())
+
+  @@map("usuarios")
+}
+
+enum Tipo_Carteira {
+  CAU
+  CREA
+}
+model Cadastro {
+  id              Int           @id @default(autoincrement())
+  nome            String
+  email           String
+  cnpj            String        @unique
+  cpf             String        @unique
+  telefone        String
+  cep             String        @db.VarChar(9)
+  uf              String        @db.VarChar(2)
+  cidade          String
+  logradouro      String
+  numero          String?
+  complemento     String?
+  protocolo       String?       @unique
+  carteira_tipo   Tipo_Carteira @default(CAU)
+  carteira_numero String
+  equipe          Boolean       @default(false)
+
+  criadoEm        DateTime      @default(now())
+  atualizadoEm    DateTime      @default(now()) @updatedAt
+
+  arquivos        Arquivo[]
+  participantes   Participante[]
+
+  @@map("cadastros")
+}
+
+model Participante {
+  id            Int          @id @default(autoincrement())
+  nome          String
+  documento     String
+  cadastroId    Int
+
+  criadoEm      DateTime     @default(now())
+  atualizadoEm  DateTime     @default(now()) @updatedAt
+
+  cadastro      Cadastro     @relation(fields: [cadastroId], references: [id])
+
+  @@map("participantes")
+}
+
+enum TipoArquivo {
+  DOC_ESPECIFICA
+  PROJETOS
+}
+
+model Arquivo {
+  id            String      @id @default(uuid())
+  caminho       String
+  tipo          TipoArquivo
+  cadastroId    Int
+
+  criadoEm      DateTime    @default(now())
+  atualizadoEm  DateTime    @default(now())
+
+  cadastro      Cadastro    @relation(fields: [cadastroId], references: [id])
+
+  @@map("arquivos")
+}
