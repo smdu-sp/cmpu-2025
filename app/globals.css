@@ -158,7 +158,7 @@
   --card-foreground: oklch(0.1450 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.1450 0 0);
-  --primary: oklch(0.5706 0.1009 182.9894);
+  --primary: oklch(0.4561 0.1162 300.46);
   --primary-foreground: oklch(0.9850 0 0);
   --secondary: oklch(0.9700 0 0);
   --secondary-foreground: oklch(0.2050 0 0);
@@ -202,7 +202,7 @@
   --card-foreground: oklch(0.9850 0 0);
   --popover: oklch(0.2690 0 0);
   --popover-foreground: oklch(0.9850 0 0);
-  --primary: oklch(0.5706 0.1009 182.9894);
+  --primary: oklch(0.4561 0.1162 300.46);
   --primary-foreground: oklch(0.2050 0 0);
   --secondary: oklch(0.2690 0 0);
   --secondary-foreground: oklch(0.9850 0 0);
@@ -300,6 +300,7 @@
     @apply border-border outline-ring/50;
     scroll-behavior: smooth;
   }
+
   body {
     @apply bg-background text-foreground;
     letter-spacing: var(--tracking-normal);
