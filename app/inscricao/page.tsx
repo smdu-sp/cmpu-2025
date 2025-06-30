@@ -108,7 +108,7 @@ export default function Inscricao() {
 		event?.preventDefault();
 
 		const inscricaoData: IInscricaoDto = {
-			tipoCadastro: is_chapa ? 'chapa' : 'individual', // Define tipoCadastro baseado em is_chapa
+			tipoCadastro: is_chapa ? 'chapa' : 'individual',
 			nomeEntidade,
 			segmento: segmento as Segmento,
 			is_chapa,
@@ -175,7 +175,6 @@ export default function Inscricao() {
 		if (
 			!nome ||
 			!email ||
-			// Removido tipoCadastro da validação
 			!nomeEntidade ||
 			!segmento ||
 			nome === '' ||
