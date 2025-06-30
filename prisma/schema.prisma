@@ -9,23 +9,36 @@ datasource db {
 }
 
 model Inscricao {
-    id           String @id @default(uuid())
-    tipoCadastro String 
-    nomeChapa    String? 
-    nomeEntidade String 
+    id           String    @id @default(uuid())
+    tipoCadastro String
+    nomeChapa    String?
+    nomeEntidade String
     segmento     Segmento
     is_chapa     Boolean
-    nome         String 
+    nome         String
     email        String
-    anexoPath    String 
-    createdAt    DateTime @default(now())
+    // anexoPath removido daqui, pois agora será um relacionamento com o model Arquivo
+    createdAt    DateTime  @default(now())
+
+    arquivo      Arquivo?
+}
+
+model Arquivo {
+    id           String    @id @default(uuid())
+    caminho      String    
+    inscricaoId  String    @unique 
+    criadoEm     DateTime  @default(now())
+    atualizadoEm DateTime  @default(now()) @updatedAt 
+
+    inscricao    Inscricao @relation(fields: [inscricaoId], references: [id])
+
+    @@map("arquivos") // Nome da tabela no banco de dados
 }
 
 enum Segmento {
-  MOVIMENTO_DE_MORADIA
-  ENTIDADES_ACADEMICAS_DE_PESQUISA
-  ASSOCIACOES_DE_BAIRRO
-  MOVIMENTOS_AMBIENTALISTAS
-  SETOR_EMPRESARIAL
+  MOVIMENTO_DE_MORADIA
+  ENTIDADES_ACADEMICAS_DE_PESQUISA
+  ASSOCIACOES_DE_BAIRRO
+  MOVIMENTOS_AMBIENTALISTAS
+  SETOR_EMPRESARIAL
 }
-

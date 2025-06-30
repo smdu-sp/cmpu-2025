@@ -8,5 +8,5 @@ export interface IInscricaoDto {
     is_chapa: boolean;
     nome: string;
     email: string;
-    anexoPath: string;
+    arquivo: File;
 }

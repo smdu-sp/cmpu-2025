@@ -17,12 +17,9 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { Plus, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { BaseSyntheticEvent, startTransition, useState } from 'react';
 import { toast } from 'sonner';
-
-import { IInscricaoDto } from '../api/inscricao/inscricao.dto';
 import ModalConcluido from './_components/modal-concluido';
 
 enum Segmento {
@@ -40,14 +37,14 @@ export default function Inscricao() {
 	const [protocolo, setProtocolo] = useState('');
 	const router = useRouter();
 
-	// Removido o estado tipoCadastro
-	const [nomeChapa, setNomeChapa] = useState<string>('');
-	const [nomeEntidade, setNomeEntidade] = useState<string>('');
+	const [nome, setNome] = useState('');
+	const [email, setEmail] = useState('');
+	const [nomeEntidade, setNomeEntidade] = useState('');
 	const [segmento, setSegmento] = useState<Segmento | ''>('');
 	const [is_chapa, setIsChapa] = useState<boolean>(false);
-	const [nome, setNome] = useState<string>('');
-	const [email, setEmail] = useState<string>('');
-	const [anexoPath, setAnexoPath] = useState<string>('');
+	const [nomeChapa, setNomeChapa] = useState<string>('');
+
+	const [arquivo, setArquivo] = useState<File[]>([]);
 
 	const [termos, setTermos] = useState(false);
 
@@ -58,15 +55,14 @@ export default function Inscricao() {
 				<div className='flex flex-col gap-2 text-muted-foreground'>
 					<p>Nome do Contato: {nome}</p>
 					<p>Email do Contato: {email}</p>
-					{/* Removido o display de tipoCadastro */}
 					<p>Nome da Entidade: {nomeEntidade}</p>
 					<p>Segmento: {segmento}</p>
 					{is_chapa && <p>Nome da Chapa: {nomeChapa}</p>}
 				</div>
 				<Separator className='my-4' />
-				<h2 className='text-lg mb-2'>Documentos enviados</h2>
+				<h2 className='text-lg mb-2'>arquivos enviados</h2>
 				<div className='flex flex-col gap-2 text-muted-foreground'>
-					<p>Anexo Principal: {anexoPath ? anexoPath : 'Nenhum arquivo anexado'}</p>
+					<p>Anexo Principal: {arquivo.length > 0 ? arquivo[0].name : 'Nenhum arquivo anexado'}</p>
 				</div>
 				<Separator className='my-4' />
 				<FormItem className='gap-1 flex items-center space-x-2'>
@@ -107,30 +103,29 @@ export default function Inscricao() {
 	) {
 		event?.preventDefault();
 
-		const inscricaoData: IInscricaoDto = {
-			tipoCadastro: is_chapa ? 'chapa' : 'individual',
-			nomeEntidade,
-			segmento: segmento as Segmento,
-			is_chapa,
-			nome,
-			email,
-			anexoPath,
-		};
+		const formData = new FormData();
 
-		if (is_chapa) {
-			inscricaoData.nomeChapa = nomeChapa;
+		formData.append('nome', nome);
+		formData.append('email', email);
+		formData.append('nomeEntidade', nomeEntidade);
+		formData.append('segmento', segmento);
+		formData.append('is_chapa', is_chapa.toString());
+
+		if (is_chapa && nomeChapa) {
+			formData.append('nomeChapa', nomeChapa);
+		}
+
+		if (arquivo.length > 0) {
+			formData.append('arquivo', arquivo[0]);
 		}
 
 		startTransition(async () => {
 			try {
 				const res = await fetch(
-					`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/inscricao`,
+					`${process.env.BASE_URL || 'http://localhost:3000'}/api/inscricao`,
 					{
 						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json',
-						},
-						body: JSON.stringify(inscricaoData),
+						body: formData,
 					},
 				);
 
@@ -185,7 +180,6 @@ export default function Inscricao() {
 		) {
 			isValid = false;
 		}
-
 		if (is_chapa && !nomeChapa) {
 			isValid = false;
 		}
@@ -193,7 +187,7 @@ export default function Inscricao() {
 	}
 
 	function checkStep2() {
-		return anexoPath !== '';
+		return arquivo.length > 0;
 	}
 
 	function checkStep3() {
@@ -215,8 +209,7 @@ export default function Inscricao() {
 						contentClassName='my-6'
 						final={<Finalizado />}
 						submitButton={<Submit />}
-						disableNextButton={false}
-					>
+						disableNextButton={false}>
 						<Step>
 							<div className='flex flex-col gap-4'>
 								<div className='grid grid-cols-4 gap-6'>
@@ -241,7 +234,6 @@ export default function Inscricao() {
 											onChange={(e) => setEmail(e.target.value)}
 										/>
 									</div>
-									{/* Removido o input de tipoCadastro */}
 									<div className='col-span-4 flex flex-col gap-3'>
 										<Label htmlFor='nomeEntidade'>Nome da Entidade</Label>
 										<Input
@@ -301,56 +293,24 @@ export default function Inscricao() {
 								</div>
 							</div>
 						</Step>
-
 						<Step>
 							<div className='col-span-4 flex flex-col gap-3'>
 								<div className='leading-none font-semibold'>Anexo da Inscrição</div>
 								<span className='text-muted-foreground'>
-									Faça o upload do documento principal da sua inscrição (ex: PDF com a proposta).
+									Faça o upload do arquivo principal da sua inscrição (ex: PDF, DOC, TXT).
 								</span>
 								<DragDropInput
 									multiple={false}
 									maxSize={50 * 1024 * 1024}
-									accept='.pdf,.doc,.docx'
-									helperText='Máximo 50MB. Somente PDF, DOC, DOCX.'
-									onChange={async (files) => {
-										if (files.length > 0) {
-											const fileToUpload = files[0];
-											const uploadFormData = new FormData();
-											uploadFormData.append('file', fileToUpload);
-
-											try {
-												const uploadRes = await fetch(
-													`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/upload`,
-													{
-														method: 'POST',
-														body: uploadFormData,
-													}
-												);
-
-												if (uploadRes.ok) {
-													const uploadData = await uploadRes.json();
-													setAnexoPath(uploadData.anexoPath);
-													toast.success('Anexo enviado com sucesso!');
-												} else {
-													const errorUploadData = await uploadRes.json();
-													toast.error(`Erro ao enviar anexo: ${errorUploadData.message || 'Tente novamente.'}`);
-													setAnexoPath('');
-												}
-											} catch (error) {
-												console.error('Erro de rede ao enviar anexo:', error);
-												toast.error('Erro de rede ao enviar anexo. Verifique sua conexão.');
-												setAnexoPath('');
-											}
-										} else {
-											setAnexoPath('');
-										}
+									accept='.pdf,.doc,.docx,.txt'
+									helperText='Máximo 50MB. Somente PDF, DOC, DOCX, TXT.'
+									onChange={(files) => {
+										setArquivo(files);
 									}}
-									value={anexoPath ? [{ name: anexoPath } as File] : []}
+									value={arquivo}
 								/>
 							</div>
 						</Step>
-
 						<Step>
 							<Finalizado />
 						</Step>
