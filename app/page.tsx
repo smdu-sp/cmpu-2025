@@ -1,20 +1,75 @@
 "use client";
 
-import { useState } from "react"; // Importando o hook useState
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
-
-import logo from "../public/logo-urban.png";
-import cmpu from "../public/logo-final-eleicao-CMPU_300x200.png";
 import Link from "next/link";
+import cmpu from "../public/logo-final-eleicao-CMPU_300x200.png"
+import logo from "../public/logo-urban.png"
 
+// --- COMPONENTE PRINCIPAL DO FORMULÁRIO ---
 export default function CMPUForm() {
-  // Estado para controlar o tipo de inscrição, iniciando com 'chapa'
+  // --- ESTADOS DO FORMULÁRIO ---
+  // Controle do tipo de inscrição (Chapa ou Individual)
   const [tipoInscricao, setTipoInscricao] = useState("chapa");
+  
+  // Campos de texto
+  const [nomeChapa, setNomeChapa] = useState("");
+  const [nomeEntidade, setNomeEntidade] = useState("");
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [confirmeEmail, setConfirmeEmail] = useState("");
 
+  // Campo de seleção (Radio Button)
+  const [segmento, setSegmento] = useState("");
+
+  // Campos de arquivo
+  const [documentoEntidade, setDocumentoEntidade] = useState<File | null>(null);
+  const [documentoCandidato, setDocumentoCandidato] = useState<File | null>(null);
+
+  // Campo de confirmação (Checkbox)
+  const [confirmo, setConfirmo] = useState(false);
+
+  // --- FUNÇÃO DE SUBMISSÃO DO FORMULÁRIO ---
+  const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
+    // Previne o comportamento padrão de recarregar a página
+    event.preventDefault();
+
+    // 1. Validação de E-mail
+    if (email !== confirmeEmail) {
+      alert("Erro: Os campos de e-mail e confirmação de e-mail não coincidem.");
+      return; // Interrompe a função se a validação falhar
+    }
+    
+    // 2. Validação do checkbox de confirmação
+    if (!confirmo) {
+      alert("Você precisa confirmar que as informações são verdadeiras para enviar.");
+      return; // Interrompe a função se a validação falhar
+    }
+
+    // 3. Criação do objeto com todos os dados capturados
+    const dadosCapturados = {
+      tipoInscricao,
+      nomeChapa: tipoInscricao === "chapa" ? nomeChapa : null, 
+      nomeEntidade,
+      segmento,
+      documentoEntidade, // Objeto do arquivo da entidade
+      documentoCandidato, // Objeto do arquivo do candidato
+      confirmo,
+      nome,
+      email,
+    };
+
+    // 4. Exibe o objeto no console do navegador
+    console.log("--- DADOS CAPTURADOS PELO FORMULÁRIO ---");
+    console.log(dadosCapturados);
+    alert("Dados capturados com sucesso! Verifique o console do navegador (F12) para ver o objeto.");
+  };
+
+  // --- RENDERIZAÇÃO DO COMPONENTE (JSX) ---
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 px-18">
       <div className="w-full max-w-[1500px] mx-auto">
@@ -93,7 +148,6 @@ export default function CMPUForm() {
               Informações da chapa
             </div>
             <div className="border border-gray-300 p-4 space-y-4">
-              {/* O campo "Nome da chapa" só aparece se o tipo de inscrição for 'chapa' */}
               {tipoInscricao === "chapa" && (
                 <div>
                   <Label htmlFor="nome-chapa" className="text-sm font-medium">
@@ -101,6 +155,8 @@ export default function CMPUForm() {
                   </Label>
                   <Input
                     id="nome-chapa"
+                    value={nomeChapa}
+                    onChange={(e) => setNomeChapa(e.target.value)}
                     className="mt-1 border-black border-2 h-[50px]"
                   />
                 </div>
@@ -112,6 +168,8 @@ export default function CMPUForm() {
                 </Label>
                 <Input
                   id="nome-entidade"
+                  value={nomeEntidade}
+                  onChange={(e) => setNomeEntidade(e.target.value)}
                   className="mt-1 border-black border-2 h-[50px]"
                 />
               </div>
@@ -122,15 +180,15 @@ export default function CMPUForm() {
                   {/* Coluna 1 */}
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
-                      <input type="radio" id="movimento-moradia" name="segmento" className="w-4 h-4" />
+                      <input type="radio" id="movimento-moradia" name="segmento" value="MOVIMENTO_DE_MORADIA" checked={segmento === "MOVIMENTO_DE_MORADIA"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
                       <label htmlFor="movimento-moradia">Movimento de moradia</label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <input type="radio" id="entidades-academicas" name="segmento" className="w-4 h-4" />
+                      <input type="radio" id="entidades-academicas" name="segmento" value="ENTIDADES_ACADEMICAS_DE_PESQUISA" checked={segmento === "ENTIDADES_ACADEMICAS_DE_PESQUISA"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
                       <label htmlFor="entidades-academicas">Entidades acadêmicas e de pesquisa</label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <input type="radio" id="movimentos-mobilidade" name="segmento" className="w-4 h-4" />
+                      <input type="radio" id="movimentos-mobilidade" name="segmento" value="MOVIMENTOS_DE_MOBILIDADE_URBANA" checked={segmento === "MOVIMENTOS_DE_MOBILIDADE_URBANA"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
                       <label htmlFor="movimentos-mobilidade">Movimentos de Mobilidade Urbana</label>
                     </div>
                   </div>
@@ -138,15 +196,15 @@ export default function CMPUForm() {
                   {/* Coluna 2 */}
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
-                      <input type="radio" id="associacoes-bairro" name="segmento" className="w-4 h-4" />
+                      <input type="radio" id="associacoes-bairro" name="segmento" value="ASSOCIACOES_DE_BAIRRO" checked={segmento === "ASSOCIACOES_DE_BAIRRO"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
                       <label htmlFor="associacoes-bairro">Associações de bairro</label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <input type="radio" id="movimento-ambientalista" name="segmento" className="w-4 h-4" />
+                      <input type="radio" id="movimento-ambientalista" name="segmento" value="MOVIMENTOS_AMBIENTALISTAS" checked={segmento === "MOVIMENTOS_AMBIENTALISTAS"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
                       <label htmlFor="movimento-ambientalista">Movimentos ambientalistas</label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <input type="radio" id="movimento-cultural" name="segmento" className="w-4 h-4" />
+                      <input type="radio" id="movimento-cultural" name="segmento" value="MOVIMENTO_CULTURAL" checked={segmento === "MOVIMENTO_CULTURAL"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
                       <label htmlFor="movimento-cultural">Movimento Cultural</label>
                     </div>
                   </div>
@@ -154,15 +212,15 @@ export default function CMPUForm() {
                   {/* Coluna 3 */}
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
-                      <input type="radio" id="setor-empresarial" name="segmento" className="w-4 h-4" />
+                      <input type="radio" id="setor-empresarial" name="segmento" value="SETOR_EMPRESARIAL" checked={segmento === "SETOR_EMPRESARIAL"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
                       <label htmlFor="setor-empresarial">Setor empresarial</label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <input type="radio" id="ongs" name="segmento" className="w-4 h-4" />
+                      <input type="radio" id="ongs" name="segmento" value="ONG" checked={segmento === "ONG"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
                       <label htmlFor="ongs">ONG</label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <input type="radio" id="entidades-religiosas" name="segmento" className="w-4 h-4" />
+                      <input type="radio" id="entidades-religiosas" name="segmento" value="ENTIDADE_RELIGIOSA" checked={segmento === "ENTIDADE_RELIGIOSA"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
                       <label htmlFor="entidades-religiosas">Entidade Religiosa</label>
                     </div>
                   </div>
@@ -194,7 +252,6 @@ export default function CMPUForm() {
                 para instruções de como compactar os arquivos.
               </div>
 
-              {/* Input de arquivo para Documento da entidade */}
               <div>
                 <Label className="text-sm font-medium">
                   Documento da entidade
@@ -209,13 +266,14 @@ export default function CMPUForm() {
                   <Input
                     id="doc-entidade"
                     type="file"
-                    accept=".zip"
+                    accept=".zip, .pdf, .txt"
+                    onChange={(e) => e.target.files && setDocumentoEntidade(e.target.files[0])}
                     className="hidden"
                   />
                 </div>
+                {documentoEntidade && <span className="text-xs text-gray-500 mt-1 block">Arquivo selecionado: {documentoEntidade.name}</span>}
               </div>
 
-              {/* Input de arquivo para Documento do candidato */}
               <div>
                 <Label className="text-sm font-medium">
                   Documento do candidato
@@ -230,15 +288,19 @@ export default function CMPUForm() {
                   <Input
                     id="doc-candidato"
                     type="file"
-                    accept=".zip"
+                    accept=".zip, .pdf, .txt"
+                    onChange={(e) => e.target.files && setDocumentoCandidato(e.target.files[0])}
                     className="hidden"
                   />
                 </div>
+                {documentoCandidato && <span className="text-xs text-gray-500 mt-1 block">Arquivo selecionado: {documentoCandidato.name}</span>}
               </div>
 
               <div className="flex items-center space-x-2 pt-2">
                 <Checkbox
                   id="confirmo"
+                  checked={confirmo}
+                  onCheckedChange={(checked) => setConfirmo(checked as boolean)}
                   className=" border-foreground border-2"
                 />
                 <label htmlFor="confirmo" className="text-sm ">
@@ -260,6 +322,8 @@ export default function CMPUForm() {
                 </Label>
                 <Input
                   id="nome"
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
                   className="mt-1 border-black border-2 h-[50px]"
                 />
               </div>
@@ -272,6 +336,8 @@ export default function CMPUForm() {
                   <Input
                     id="email"
                     type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="mt-1 border-black border-2 h-[50px]"
                   />
                 </div>
@@ -285,6 +351,8 @@ export default function CMPUForm() {
                   <Input
                     id="confirme-email"
                     type="email"
+                    value={confirmeEmail}
+                    onChange={(e) => setConfirmeEmail(e.target.value)}
                     className="mt-1 border-black border-2 h-[50px]"
                   />
                 </div>
@@ -294,7 +362,10 @@ export default function CMPUForm() {
 
           {/* Submit Button */}
           <div className="pb-6 flex justify-end">
-            <Button className="bg-green-500 hover:bg-green-600 text-white w-44 h-13 font-bold px-12 py-3 rounded-full text-lg">
+            <Button
+              onClick={handleSubmit}
+              className="bg-green-500 hover:bg-green-600 text-white w-44 h-13 font-bold px-12 py-3 rounded-full text-lg"
+            >
               Enviar
             </Button>
           </div>
