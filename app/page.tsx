@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react"; // Importando o hook useState
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +12,9 @@ import cmpu from "../public/logo-final-eleicao-CMPU_300x200.png";
 import Link from "next/link";
 
 export default function CMPUForm() {
+  // Estado para controlar o tipo de inscrição, iniciando com 'chapa'
+  const [tipoInscricao, setTipoInscricao] = useState("chapa");
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 px-18">
       <div className="w-full max-w-[1500px] mx-auto">
@@ -45,12 +51,20 @@ export default function CMPUForm() {
             </div>
           </div>
           <div className="flex gap-4">
-            <Button className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-2 rounded-full w-44 h-13 font-bold text-lg">
+            <Button
+              onClick={() => setTipoInscricao("chapa")}
+              className={`bg-purple-600 hover:bg-purple-700 text-white px-8 py-2 rounded-full w-44 h-13 font-bold text-lg transition-opacity duration-300 ${
+                tipoInscricao !== "chapa" && "opacity-50"
+              }`}
+            >
               Chapa
             </Button>
             <Button
+              onClick={() => setTipoInscricao("individual")}
               variant="outline"
-              className="bg-pink-500 hover:bg-pink-600 text-white px-8 py-2 rounded-full border-pink-500 w-44 h-13 font-bold text-lg"
+              className={`bg-pink-500 hover:bg-pink-600 text-white px-8 py-2 rounded-full border-pink-500 w-44 h-13 font-bold text-lg transition-opacity duration-300 ${
+                tipoInscricao !== "individual" && "opacity-50"
+              }`}
             >
               Individual
             </Button>
@@ -73,21 +87,24 @@ export default function CMPUForm() {
             </p>
           </div>
 
-          {/* Informações da chapa -- CORRIGIDO */}
+          {/* Informações da chapa */}
           <div className="mb-6 border-foreground border-2">
             <div className="bg-foreground text-white p-3 font-semibold">
               Informações da chapa
             </div>
             <div className="border border-gray-300 p-4 space-y-4">
-              <div>
-                <Label htmlFor="nome-chapa" className="text-sm font-medium">
-                  Nome da chapa
-                </Label>
-                <Input
-                  id="nome-chapa"
-                  className="mt-1 border-black border-2 h-[50px]"
-                />
-              </div>
+              {/* O campo "Nome da chapa" só aparece se o tipo de inscrição for 'chapa' */}
+              {tipoInscricao === "chapa" && (
+                <div>
+                  <Label htmlFor="nome-chapa" className="text-sm font-medium">
+                    Nome da chapa
+                  </Label>
+                  <Input
+                    id="nome-chapa"
+                    className="mt-1 border-black border-2 h-[50px]"
+                  />
+                </div>
+              )}
 
               <div>
                 <Label htmlFor="nome-entidade" className="text-sm font-medium">
