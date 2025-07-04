@@ -49,6 +49,7 @@
   --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 4px 6px -1px hsl(0 0% 0% / 0.10);
   --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10);
   --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+
 }
 
 .dark {
@@ -97,6 +98,7 @@
   --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10);
   --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
 }
+
 
 @theme inline {
   --color-background: var(--background);
@@ -149,6 +151,9 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+  --shadow-inner-top-purple: 'inset 0px -8px 1.5px #3B235F ';
+  --shadow-inner-top-pink: 'inset 0px -8px 1.5px #790027';
+
 }
 
 :root {
@@ -240,6 +245,8 @@
   --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 4px 6px -1px hsl(0 0% 0% / 0.10);
   --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10);
   --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+  --shadow-inner-top-purple: 'inset 0px -8px 1.5px #3B235F ';
+  --shadow-inner-top-pink: 'inset 0px -8px 1.5px #790027';
 }
 
 @theme inline {
@@ -293,6 +300,8 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+  --shadow-inner-top-purple: 'inset 0px -8px 1.5px #3B235F ';
+  --shadow-inner-top-pink: 'inset 0px -8px 1.5px #790027';
 }
 
 @layer base {

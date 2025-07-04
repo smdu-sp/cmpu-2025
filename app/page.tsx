@@ -10,12 +10,11 @@ import Link from "next/link";
 import cmpu from "../public/logo-final-eleicao-CMPU_300x200.png"
 import logo from "../public/logo-urban.png"
 
-// --- COMPONENTE PRINCIPAL DO FORMULÁRIO ---
 export default function CMPUForm() {
-  // --- ESTADOS DO FORMULÁRIO ---
+
   // Controle do tipo de inscrição (Chapa ou Individual)
   const [tipoInscricao, setTipoInscricao] = useState("chapa");
-  
+
   // Campos de texto
   const [nomeChapa, setNomeChapa] = useState("");
   const [nomeEntidade, setNomeEntidade] = useState("");
@@ -41,19 +40,19 @@ export default function CMPUForm() {
     // 1. Validação de E-mail
     if (email !== confirmeEmail) {
       alert("Erro: Os campos de e-mail e confirmação de e-mail não coincidem.");
-      return; // Interrompe a função se a validação falhar
+      return;
     }
-    
+
     // 2. Validação do checkbox de confirmação
     if (!confirmo) {
       alert("Você precisa confirmar que as informações são verdadeiras para enviar.");
-      return; // Interrompe a função se a validação falhar
+      return;
     }
 
     // 3. Criação do objeto com todos os dados capturados
     const dadosCapturados = {
       tipoInscricao,
-      nomeChapa: tipoInscricao === "chapa" ? nomeChapa : null, 
+      nomeChapa: tipoInscricao === "chapa" ? nomeChapa : null,
       nomeEntidade,
       segmento,
       documentoEntidade, // Objeto do arquivo da entidade
@@ -69,7 +68,7 @@ export default function CMPUForm() {
     alert("Dados capturados com sucesso! Verifique o console do navegador (F12) para ver o objeto.");
   };
 
-  // --- RENDERIZAÇÃO DO COMPONENTE (JSX) ---
+  // RENDERIZAÇÃO DO COMPONENTE (JSX) 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 px-18">
       <div className="w-full max-w-[1500px] mx-auto">
@@ -88,7 +87,7 @@ export default function CMPUForm() {
           >
             <Button
               variant="outline"
-              className="rounded-full px-6 bg-transparent border-black border-2 w-44 h-13 font-bold text-lg"
+              className="rounded-full px-6 bg-white border-black border-2 w-44 h-13 font-bold text-lg"
             >
               Edital
             </Button>
@@ -108,18 +107,16 @@ export default function CMPUForm() {
           <div className="flex gap-4">
             <Button
               onClick={() => setTipoInscricao("chapa")}
-              className={`bg-purple-600 hover:bg-purple-700 text-white px-8 py-2 rounded-full w-44 h-13 font-bold text-lg transition-opacity duration-300 ${
-                tipoInscricao !== "chapa" && "opacity-50"
-              }`}
+              className={`bg-[#62458D] hover:bg-purple-700 text-white px-8 py-2 rounded-full w-44 h-13 font-bold text-lg transition-opacity duration-300 ${tipoInscricao !== "chapa" && "opacity-70"
+                }`}
             >
               Chapa
             </Button>
             <Button
               onClick={() => setTipoInscricao("individual")}
               variant="outline"
-              className={`bg-pink-500 hover:bg-pink-600 text-white px-8 py-2 rounded-full border-pink-500 w-44 h-13 font-bold text-lg transition-opacity duration-300 ${
-                tipoInscricao !== "individual" && "opacity-50"
-              }`}
+              className={`bg-[#EA4379] hover:bg-pink-600  text-white px-8 py-2 rounded-full border-pink-500 w-44 h-13 font-bold text-lg transition-opacity duration-300 ${tipoInscricao !== "individual" && "opacity-70"
+                }`}
             >
               Individual
             </Button>
@@ -238,7 +235,7 @@ export default function CMPUForm() {
               </span>
             </div>
             <div className="border border-gray-300 p-4 space-y-4">
-              <div className="text-sm text-gray-700">
+              <div className="text-[20px] text-gray-700">
                 Recomendamos que os documentos da candidatura sejam enviados no
                 formato pasta compactada (Arquivo ZIP).{" "}
                 <Link
@@ -254,29 +251,7 @@ export default function CMPUForm() {
 
               <div>
                 <Label className="text-sm font-medium">
-                  Documento da entidade
-                </Label>
-                <div className="mt-1">
-                  <label
-                    htmlFor="doc-entidade"
-                    className="inline-block bg-[#808080] text-white py-[6px] px-[18px] text-xs font-bold leading-[18px] cursor-pointer hover:brightness-90 transition-all"
-                  >
-                    escolher arquivo
-                  </label>
-                  <Input
-                    id="doc-entidade"
-                    type="file"
-                    accept=".zip, .pdf, .txt"
-                    onChange={(e) => e.target.files && setDocumentoEntidade(e.target.files[0])}
-                    className="hidden"
-                  />
-                </div>
-                {documentoEntidade && <span className="text-xs text-gray-500 mt-1 block">Arquivo selecionado: {documentoEntidade.name}</span>}
-              </div>
-
-              <div>
-                <Label className="text-sm font-medium">
-                  Documento do candidato
+                  {/* Documento do candidato */}
                 </Label>
                 <div className="mt-1">
                   <label
@@ -288,7 +263,7 @@ export default function CMPUForm() {
                   <Input
                     id="doc-candidato"
                     type="file"
-                    accept=".zip, .pdf, .txt"
+                    accept=".zip"
                     onChange={(e) => e.target.files && setDocumentoCandidato(e.target.files[0])}
                     className="hidden"
                   />
@@ -364,7 +339,7 @@ export default function CMPUForm() {
           <div className="pb-6 flex justify-end">
             <Button
               onClick={handleSubmit}
-              className="bg-green-500 hover:bg-green-600 text-white w-44 h-13 font-bold px-12 py-3 rounded-full text-lg"
+              className="bg-[#6CBA74] hover:bg-green-600 text-white w-44 h-13 font-bold px-12 py-3 rounded-full text-lg"
             >
               Enviar
             </Button>
