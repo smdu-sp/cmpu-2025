@@ -1,12 +1,12 @@
 import { Segmento } from "@prisma/client";
 
 export interface IInscricaoDto {
-    tipoCadastro: string;
-    nomeChapa?: string;
+
+    nomeChapa?: string | null;
     nomeEntidade: string;
-    segmento: Segmento;
+    segmento: string;
     is_chapa: boolean;
     nome: string;
     email: string;
-    arquivo: File;
+    arquivo?: File;
 }

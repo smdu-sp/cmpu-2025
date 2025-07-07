@@ -10,7 +10,6 @@ datasource db {
 
 model Inscricao {
     id           String    @id @default(uuid())
-    tipoCadastro String
     nomeChapa    String?
     nomeEntidade String
     segmento     Segmento

@@ -9,76 +9,84 @@ import Image from "next/image";
 import Link from "next/link";
 import cmpu from "../public/logo-final-eleicao-CMPU_300x200.png"
 import logo from "../public/logo-urban.png"
+import { createInscricao } from "@/services/inscricao";
 
 export default function CMPUForm() {
-
-  // Controle do tipo de inscrição (Chapa ou Individual)
   const [tipoInscricao, setTipoInscricao] = useState("chapa");
 
-  // Campos de texto
   const [nomeChapa, setNomeChapa] = useState("");
   const [nomeEntidade, setNomeEntidade] = useState("");
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [confirmeEmail, setConfirmeEmail] = useState("");
 
-  // Campo de seleção (Radio Button)
   const [segmento, setSegmento] = useState("");
 
-  // Campos de arquivo
-  const [documentoEntidade, setDocumentoEntidade] = useState<File | null>(null);
   const [documentoCandidato, setDocumentoCandidato] = useState<File | null>(null);
 
-  // Campo de confirmação (Checkbox)
   const [confirmo, setConfirmo] = useState(false);
 
-  // --- FUNÇÃO DE SUBMISSÃO DO FORMULÁRIO ---
-  const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
-    // Previne o comportamento padrão de recarregar a página
+  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+    setMessage(null);
+    setLoading(true);
 
-    // 1. Validação de E-mail
-    if (email !== confirmeEmail) {
-      alert("Erro: Os campos de e-mail e confirmação de e-mail não coincidem.");
-      return;
+    try {
+      if (!nomeEntidade || !nome || !email || !confirmeEmail || !segmento) {
+        setMessage({ type: 'error', text: "Por favor, preencha todos os campos obrigatórios e confirme as informações." });
+        setLoading(false);
+        return;
+      }
+
+      if (email !== confirmeEmail) {
+        setMessage({ type: 'error', text: "Os e-mails não coincidem. Por favor, verifique." });
+        setLoading(false);
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('nomeChapa', nomeChapa);
+      formData.append('nomeEntidade', nomeEntidade);
+      formData.append('segmento', segmento);
+      formData.append('is_chapa', String(tipoInscricao === "chapa"));
+      formData.append('nome', nome);
+      formData.append('email', email);
+
+      if (documentoCandidato) {
+          formData.append('arquivo', documentoCandidato);
+      }
+
+      const response = await createInscricao(formData);
+      setMessage({ type: 'success', text: "Inscrição enviada com sucesso!" });
+
+      setNomeChapa("");
+      setNomeEntidade("");
+      setNome("");
+      setEmail("");
+      setConfirmeEmail("");
+      setSegmento("");
+      setDocumentoCandidato(null);
+      setConfirmo(false);
+
+    } catch (error: any) {
+      console.error("Erro ao enviar inscrição:", error);
+      setMessage({ type: 'error', text: error.message || "Ocorreu um erro ao enviar sua inscrição. Tente novamente mais tarde." });
+    } finally {
+      setLoading(false);
     }
-
-    // 2. Validação do checkbox de confirmação
-    if (!confirmo) {
-      alert("Você precisa confirmar que as informações são verdadeiras para enviar.");
-      return;
-    }
-
-    // 3. Criação do objeto com todos os dados capturados
-    const dadosCapturados = {
-      tipoInscricao,
-      nomeChapa: tipoInscricao === "chapa" ? nomeChapa : null,
-      nomeEntidade,
-      segmento,
-      documentoEntidade, // Objeto do arquivo da entidade
-      documentoCandidato, // Objeto do arquivo do candidato
-      confirmo,
-      nome,
-      email,
-    };
-
-    // 4. Exibe o objeto no console do navegador
-    console.log("--- DADOS CAPTURADOS PELO FORMULÁRIO ---");
-    console.log(dadosCapturados);
-    alert("Dados capturados com sucesso! Verifique o console do navegador (F12) para ver o objeto.");
   };
 
-  // RENDERIZAÇÃO DO COMPONENTE (JSX) 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 px-18">
       <div className="w-full max-w-[1500px] mx-auto">
-        {/* Header */}
         <div className="flex justify-between items-center p-6">
           <Image src={cmpu} alt={"logo cmpu"} />
           <Image src={logo} alt={"logo sp"} />
         </div>
 
-        {/* Edital Button */}
         <div className="flex px-6 pb-4 gap-9">
           <Link
             href="https://prefeitura.sp.gov.br/licenciamento/desenvolvimento_urbano/participacao_social/conselhos_e_orgaos_colegiados/cmpu/"
@@ -94,7 +102,6 @@ export default function CMPUForm() {
           </Link>
         </div>
 
-        {/* Type Selection */}
         <div className="flex px-6 pb-6 justify-between">
           <div className="mb-2">
             <div className="font-semibold text-sm font-bold text-[26px]">
@@ -122,12 +129,10 @@ export default function CMPUForm() {
             </Button>
           </div>
         </div>
-        {/*borda preta */}
         <div className="w-full">
           <div className="w-[96%] border-b-4 border-black mt-2 mx-auto mb-4"></div>
         </div>
 
-        {/* Form */}
         <div className="px-6">
           <div className="mb-4">
             <h2 className="text-lg font-bold text-[26px]">
@@ -139,7 +144,12 @@ export default function CMPUForm() {
             </p>
           </div>
 
-          {/* Informações da chapa */}
+          {message && (
+            <div className={`p-3 rounded-md mb-4 ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+              {message.text}
+            </div>
+          )}
+
           <div className="mb-6 border-foreground border-2">
             <div className="bg-foreground text-white p-3 font-semibold">
               Informações da chapa
@@ -174,7 +184,6 @@ export default function CMPUForm() {
               <div>
                 <Label className="text-sm font-medium">Segmento</Label>
                 <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-4 text-sm">
-                  {/* Coluna 1 */}
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
                       <input type="radio" id="movimento-moradia" name="segmento" value="MOVIMENTO_DE_MORADIA" checked={segmento === "MOVIMENTO_DE_MORADIA"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
@@ -190,7 +199,6 @@ export default function CMPUForm() {
                     </div>
                   </div>
 
-                  {/* Coluna 2 */}
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
                       <input type="radio" id="associacoes-bairro" name="segmento" value="ASSOCIACOES_DE_BAIRRO" checked={segmento === "ASSOCIACOES_DE_BAIRRO"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
@@ -206,7 +214,6 @@ export default function CMPUForm() {
                     </div>
                   </div>
 
-                  {/* Coluna 3 */}
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
                       <input type="radio" id="setor-empresarial" name="segmento" value="SETOR_EMPRESARIAL" checked={segmento === "SETOR_EMPRESARIAL"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
@@ -226,7 +233,6 @@ export default function CMPUForm() {
             </div>
           </div>
 
-          {/* Anexos */}
           <div className="mb-6  border-foreground border-2">
             <div className="bg-foreground text-white p-3 font-semibold">
               Anexos{" "}
@@ -251,7 +257,6 @@ export default function CMPUForm() {
 
               <div>
                 <Label className="text-sm font-medium">
-                  {/* Documento do candidato */}
                 </Label>
                 <div className="mt-1">
                   <label
@@ -285,7 +290,6 @@ export default function CMPUForm() {
             </div>
           </div>
 
-          {/* Contato */}
           <div className="mb-6  border-foreground border-2">
             <div className="bg-foreground text-white p-3 font-semibold">
               Contato
@@ -335,13 +339,13 @@ export default function CMPUForm() {
             </div>
           </div>
 
-          {/* Submit Button */}
           <div className="pb-6 flex justify-end">
             <Button
               onClick={handleSubmit}
               className="bg-[#6CBA74] hover:bg-green-600 text-white w-44 h-13 font-bold px-12 py-3 rounded-full text-lg"
+              disabled={loading}
             >
-              Enviar
+              {loading ? 'Enviando...' : 'Enviar'}
             </Button>
           </div>
         </div>
