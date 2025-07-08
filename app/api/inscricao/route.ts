@@ -84,7 +84,7 @@ export async function POST(request: Request) {
                 text: "Sua inscrição foi registrada com sucesso! \n\nSeu protocolo de inscrição é: " + protocolo,
                 html: formataEmail(protocolo),
             },
-            (err: any, info: any) => {
+            (err, info) => {
                 if (err) {
                     console.error(err);
                     return;
@@ -134,16 +134,17 @@ export async function POST(request: Request) {
                     }
                 });
             }
-            const atualizarProtocolo = await tx.inscricao.update({
+            await tx.inscricao.update({
                 where: { id: inscricao.id },
                 data: { protocolo: protocolo_gerado }
             });
+            enviarEmail(email, protocolo_gerado);
             return protocolo_gerado;
         });
 
         if (protocolo && protocolo !== "") return NextResponse.json(protocolo, { status: 201 });
         return NextResponse.json({ message: "Erro ao criar inscrição" }, { status: 500 });
-
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
         console.error("Erro ao criar inscrição:", error);
         return NextResponse.json({ message: "Erro ao criar inscrição", error: error.message }, { status: 500 });

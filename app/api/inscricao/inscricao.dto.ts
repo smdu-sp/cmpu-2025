@@ -1,7 +1,4 @@
-import { Segmento } from "@prisma/client";
-
 export interface IInscricaoDto {
-
     nomeChapa?: string | null;
     nomeEntidade: string;
     segmento: string;

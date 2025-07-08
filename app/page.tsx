@@ -75,7 +75,7 @@ export default function CMPUForm() {
       setSegmento("");
       setDocumentoCandidato(null);
       setConfirmo(false);
-
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Erro ao enviar inscrição:", error);
       toast.error('Ocorreu um erro ao enviar sua inscrição. Tente novamente mais tarde.');
