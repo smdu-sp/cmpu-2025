@@ -4,7 +4,7 @@
 @plugin "tailwindcss-motion";
 @custom-variant dark (&:is(.dark *));
 
-/* :root {
+:root {
   --background: hsl(0 0% 100%);
   --foreground: hsl(0 0% 14.50%);
   --card: hsl(0 0% 100%);
@@ -49,6 +49,7 @@
   --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 4px 6px -1px hsl(0 0% 0% / 0.10);
   --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10);
   --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+
 }
 
 .dark {
@@ -98,6 +99,7 @@
   --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
 }
 
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -149,7 +151,10 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
-} */
+  --shadow-inner-top-purple: 'inset 0px -8px 1.5px #3B235F ';
+  --shadow-inner-top-pink: 'inset 0px -8px 1.5px #790027';
+
+}
 
 :root {
   --background: oklch(1 0 0);
@@ -158,7 +163,7 @@
   --card-foreground: oklch(0.1450 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.1450 0 0);
-  --primary: oklch(0.5706 0.1009 182.9894);
+  --primary: oklch(0.2635 0.032 250.91);
   --primary-foreground: oklch(0.9850 0 0);
   --secondary: oklch(0.9700 0 0);
   --secondary-foreground: oklch(0.2050 0 0);
@@ -202,7 +207,7 @@
   --card-foreground: oklch(0.9850 0 0);
   --popover: oklch(0.2690 0 0);
   --popover-foreground: oklch(0.9850 0 0);
-  --primary: oklch(0.5706 0.1009 182.9894);
+  --primary: oklch(0.4561 0.1162 300.46);
   --primary-foreground: oklch(0.2050 0 0);
   --secondary: oklch(0.2690 0 0);
   --secondary-foreground: oklch(0.9850 0 0);
@@ -240,6 +245,8 @@
   --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 4px 6px -1px hsl(0 0% 0% / 0.10);
   --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10);
   --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+  --shadow-inner-top-purple: 'inset 0px -8px 1.5px #3B235F ';
+  --shadow-inner-top-pink: 'inset 0px -8px 1.5px #790027';
 }
 
 @theme inline {
@@ -293,6 +300,8 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+  --shadow-inner-top-purple: 'inset 0px -8px 1.5px #3B235F ';
+  --shadow-inner-top-pink: 'inset 0px -8px 1.5px #790027';
 }
 
 @layer base {
@@ -300,6 +309,7 @@
     @apply border-border outline-ring/50;
     scroll-behavior: smooth;
   }
+
   body {
     @apply bg-background text-foreground;
     letter-spacing: var(--tracking-normal);

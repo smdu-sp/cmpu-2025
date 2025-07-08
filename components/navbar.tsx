@@ -5,7 +5,7 @@ import { auth } from '@/auth';
 import { ToggleTheme } from '@/components/toggle-theme';
 import Image from 'next/image';
 import Link from 'next/link';
-import logo from '../public/logo-header.png';
+import logo from '../public/logo-final-eleicao-CMPU_300x200.png';
 import UserLogged from './user-logged';
 
 export default async function Navbar() {
@@ -17,8 +17,8 @@ export default async function Navbar() {
 					<Image
 						src={logo}
 						alt='Brasão da Prefeitura de São Paulo'
-						width={120}
-						height={80}
+						width={100}
+						height={60}
 						quality={100}
 					/>
 				</Link>
@@ -33,17 +33,17 @@ export default async function Navbar() {
 						className='text-sm hover:underline'>
 						Informações
 					</a>
-					<a
-						href='#docs'
+					<Link
+						href='https://prefeitura.sp.gov.br/licenciamento/desenvolvimento_urbano/participacao_social/conselhos_e_orgaos_colegiados/cmpu/'
 						className='text-sm hover:underline'>
-						Documentos
-					</a>
+						Edital
+					</Link>
 
-					<a
-						href='#contact'
+					<Link
+						href='https://prefeitura.sp.gov.br/licenciamento/desenvolvimento_urbano/participacao_social/conselhos_e_orgaos_colegiados/cmpu/'
 						className='text-sm hover:underline'>
-						Contato
-					</a>
+						Sobre o CMPU
+					</Link>
 				</nav>
 				{/* <Button
 							variant='outline'
