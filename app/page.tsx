@@ -10,6 +10,7 @@ import Link from "next/link";
 import cmpu from "../public/logo-final-eleicao-CMPU_300x200.png"
 import logo from "../public/logo-urban.png"
 import { createInscricao } from "@/services/inscricao";
+import { toast } from "sonner";
 
 export default function CMPUForm() {
   const [tipoInscricao, setTipoInscricao] = useState("chapa");
@@ -56,11 +57,15 @@ export default function CMPUForm() {
       formData.append('email', email);
 
       if (documentoCandidato) {
-          formData.append('arquivo', documentoCandidato);
+        formData.append('arquivo', documentoCandidato);
       }
 
       const response = await createInscricao(formData);
-      setMessage({ type: 'success', text: "Inscrição enviada com sucesso!" });
+      console.log(response);
+      if (response && response !== "") {
+        toast.success('Inscrição enviada com sucesso! Protocolo: ' + response);
+        // setMessage({ type: 'success', text: `Inscrição enviada com sucesso! Protocolo: ${response}` });
+      }
 
       setNomeChapa("");
       setNomeEntidade("");
@@ -73,23 +78,24 @@ export default function CMPUForm() {
 
     } catch (error: any) {
       console.error("Erro ao enviar inscrição:", error);
-      setMessage({ type: 'error', text: error.message || "Ocorreu um erro ao enviar sua inscrição. Tente novamente mais tarde." });
+      toast.error('Ocorreu um erro ao enviar sua inscrição. Tente novamente mais tarde.');
+      // setMessage({ type: 'error', text: error.message || "Ocorreu um erro ao enviar sua inscrição. Tente novamente mais tarde." });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100 px-18">
+    <div className="flex flex-col min-h-screen bg-gray-100 md:px-18">
       <div className="w-full max-w-[1500px] mx-auto">
         <div className="flex justify-between items-center p-6">
-          <Image src={cmpu} alt={"logo cmpu"} />
+          <Image className="md:w-40" src={cmpu} alt={"logo cmpu"} />
           <Image src={logo} alt={"logo sp"} />
         </div>
 
         <div className="flex px-6 pb-4 gap-9">
           <Link
-            href="https://prefeitura.sp.gov.br/licenciamento/desenvolvimento_urbano/participacao_social/conselhos_e_orgaos_colegiados/cmpu/"
+            href="https://prefeitura.sp.gov.br/web/licenciamento/w/edital-nº-001/2025/cmpu-procedimentos-de-eleição-dos-representantes-da-sociedade-civil-para-compor-o-conselho-municipal-de-política-urbana-cmpu"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -102,16 +108,16 @@ export default function CMPUForm() {
           </Link>
         </div>
 
-        <div className="flex px-6 pb-6 justify-between">
+        <div className="flex flex-col md:flex-row px-6 pb-6 justify-between">
           <div className="mb-2">
-            <div className="font-semibold text-sm font-bold text-[26px]">
+            <div className="font-semibold text-sm text-[26px]">
               Tipo de inscrição
             </div>
-            <div className="text-xs text-gray-600 text-[22px] font-medium text-primary">
+            <div className="text-xs text-[22px] font-medium text-primary">
               Escolha o tipo de inscrição que deseja realizar
             </div>
           </div>
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             <Button
               onClick={() => setTipoInscricao("chapa")}
               className={`bg-[#62458D] hover:bg-purple-700 text-white px-8 py-2 rounded-full w-44 h-13 font-bold text-lg transition-opacity duration-300 ${tipoInscricao !== "chapa" && "opacity-70"
@@ -186,37 +192,45 @@ export default function CMPUForm() {
                 <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-4 text-sm">
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
-                      <input type="radio" id="movimento-moradia" name="segmento" value="MOVIMENTO_DE_MORADIA" checked={segmento === "MOVIMENTO_DE_MORADIA"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
+                      <input type="radio" id="movimento-moradia" name="segmento" value="Movimento de moradia" checked={segmento === "Movimento de moradia"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
                       <label htmlFor="movimento-moradia">Movimento de moradia</label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <input type="radio" id="entidades-academicas" name="segmento" value="ENTIDADES_ACADEMICAS_DE_PESQUISA" checked={segmento === "ENTIDADES_ACADEMICAS_DE_PESQUISA"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
+                      <input type="radio" id="entidades-academicas" name="segmento" value="Entidades acadêmicas e de pesquisa" checked={segmento === "Entidades acadêmicas e de pesquisa"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
                       <label htmlFor="entidades-academicas">Entidades acadêmicas e de pesquisa</label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <input type="radio" id="movimentos-mobilidade" name="segmento" value="MOVIMENTOS_DE_MOBILIDADE_URBANA" checked={segmento === "MOVIMENTOS_DE_MOBILIDADE_URBANA"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
+                      <input type="radio" id="movimentos-mobilidade" name="segmento" value="Movimentos de Mobilidade Urbana" checked={segmento === "Movimentos de Mobilidade Urbana"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
                       <label htmlFor="movimentos-mobilidade">Movimentos de Mobilidade Urbana</label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input type="radio" id="trabalhadores-sindicais" name="segmento" value="Trabalhadores, por suas entidades sindicais" checked={segmento === "Trabalhadores, por suas entidades sindicais"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
+                      <label htmlFor="trabalhadores-sindicais">Trabalhadores, por suas entidades sindicais</label>
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
-                      <input type="radio" id="associacoes-bairro" name="segmento" value="ASSOCIACOES_DE_BAIRRO" checked={segmento === "ASSOCIACOES_DE_BAIRRO"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
+                      <input type="radio" id="associacoes-bairro" name="segmento" value="Associações de bairro" checked={segmento === "Associações de bairro"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
                       <label htmlFor="associacoes-bairro">Associações de bairro</label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <input type="radio" id="movimento-ambientalista" name="segmento" value="MOVIMENTOS_AMBIENTALISTAS" checked={segmento === "MOVIMENTOS_AMBIENTALISTAS"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
+                      <input type="radio" id="movimento-ambientalista" name="segmento" value="Movimentos ambientalistas" checked={segmento === "Movimentos ambientalistas"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
                       <label htmlFor="movimento-ambientalista">Movimentos ambientalistas</label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <input type="radio" id="movimento-cultural" name="segmento" value="MOVIMENTO_CULTURAL" checked={segmento === "MOVIMENTO_CULTURAL"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
+                      <input type="radio" id="movimento-cultural" name="segmento" value="Movimento Cultural" checked={segmento === "Movimento Cultural"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
                       <label htmlFor="movimento-cultural">Movimento Cultural</label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input type="radio" id="entidades-profissionais" name="segmento" value="Entidades Profissionais" checked={segmento === "Entidades Profissionais"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
+                      <label htmlFor="entidades-profissionais">Entidades Profissionais</label>
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
-                      <input type="radio" id="setor-empresarial" name="segmento" value="SETOR_EMPRESARIAL" checked={segmento === "SETOR_EMPRESARIAL"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
+                      <input type="radio" id="setor-empresarial" name="segmento" value="Setor empresarial" checked={segmento === "Setor empresarial"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
                       <label htmlFor="setor-empresarial">Setor empresarial</label>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -224,7 +238,7 @@ export default function CMPUForm() {
                       <label htmlFor="ongs">ONG</label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <input type="radio" id="entidades-religiosas" name="segmento" value="ENTIDADE_RELIGIOSA" checked={segmento === "ENTIDADE_RELIGIOSA"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
+                      <input type="radio" id="entidades-religiosas" name="segmento" value="Entidade Religiosa" checked={segmento === "Entidade Religiosa"} onChange={(e) => setSegmento(e.target.value)} className="w-4 h-4" />
                       <label htmlFor="entidades-religiosas">Entidade Religiosa</label>
                     </div>
                   </div>
@@ -250,7 +264,7 @@ export default function CMPUForm() {
                   rel="noopener noreferrer"
                   className="text-blue-600 underline"
                 >
-                  clique aqui
+                  Clique aqui
                 </Link>{" "}
                 para instruções de como compactar os arquivos.
               </div>
@@ -308,7 +322,7 @@ export default function CMPUForm() {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div>
+                <div className="col-span-2 md:col-span-1">
                   <Label htmlFor="email" className="text-sm font-medium">
                     Email
                   </Label>
@@ -320,7 +334,7 @@ export default function CMPUForm() {
                     className="mt-1 border-black border-2 h-[50px]"
                   />
                 </div>
-                <div>
+                <div className="col-span-2 md:col-span-1">
                   <Label
                     htmlFor="confirme-email"
                     className="text-sm font-medium"
